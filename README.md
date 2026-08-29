@@ -50,7 +50,7 @@ The project combines RTL that I designed, course starter templates that I comple
 
 ### CPU Architecture
 
-> **[INSERT THE INTERRUPT-ENABLED OTTER ARCHITECTURE DIAGRAM HERE]**
+![Wrapper-level OTTER CPU integration](media/diagrams/RISC-V_OTTER_MCU_Architecture_Diagram.svg)
 *Figure 3: Circuit schematic for the RISC-V OTTER CPU from James Mealy's <ins>FreeRange Computer Design: The RISC-V OTTER MCU, v14.02</ins>*
 
 The processor consists of a datapath controlled by two control units:
