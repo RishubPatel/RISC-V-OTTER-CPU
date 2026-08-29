@@ -1,25 +1,24 @@
 # RISC-V OTTER CPU — RTL Design and FPGA Implementation
 
-A 32-bit multicycle, RV32I-based RISC-V OTTER CPU implemented in Verilog/SystemVerilog, verified in Vivado, and deployed to a Digilent Basys 3 FPGA. The completed processor executes RISC-V assembly firmware and supports arithmetic/logic operations, loads and stores, branches and jumps, CSR-based interrupt handling, and timer-driven peripheral behavior.
+This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilog, verified with Vivado simulations, and deployed to a Digilent Basys 3 FPGA board. The completed processor executes RISC-V assembly firmware and supports arithmetic/logic operations, loads and stores, branches and jumps, CSR-based interrupt handling, and timer-counter-based interrupts.
 
-**Technologies:** Verilog/SystemVerilog · RISC-V Assembly · AMD Vivado · Digilent Basys 3 FPGA  
-**Status:** Completed multicycle OTTER implementation with interrupt and timer support; validated on physical FPGA hardware
+**Technologies:** Verilog/SystemVerilog · RISC-V Assembly · RARS-OTTER · AMD Vivado · Digilent Basys 3 FPGA
 
 > **[INSERT SHORT VIDEO/GIF OF THE FINAL PROCESSOR RUNNING ON THE BASYS 3]**
 
-*The completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the seven-segment display.*
+*Figure 1: Final OTTER demonstration video: The video shows the completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the seven-segment display.*
 
 ---
 
 ## Project Overview
 
-This project documents my implementation of the **RISC-V OTTER CPU architecture** used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
+This GitHub repository documents my implementation of thRISC-V OTTER CPU architecture** used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
 
-The processor uses a **32-bit multicycle architecture** based primarily on the RV32I base integer instruction set, with additional system/CSR instructions used by the OTTER interrupt architecture. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
+The processor uses a 32-bit multicycle architecture based primarily on the RV32I base integer instruction set, with additional system/CSR instructions used by the OTTER interrupt architecture. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
 
 The completed implementation supports arithmetic and logical operations, shifts and comparisons, byte/halfword/word loads and stores, conditional branches, `jal`/`jalr`, upper-immediate operations, CSR access, interrupt entry, and return from an interrupt with `mret`.
 
-I verified the design progressively in Vivado, from individual datapath modules through integrated processor execution, before synthesizing and implementing the completed CPU on a Basys 3 FPGA. RISC-V assembly firmware running on the processor interacts with the board through the course-provided memory-mapped I/O interface.
+I verified the design progressively in Vivado using simulation-generated timing diagram waveforms and by synthesizing and implementing the CPU on a Basys 3 FPGA to execute various assembly programs. RISC-V assembly firmware running on the processor interacts with the board through the course-provided memory-mapped I/O interface.
 
 ---
 
@@ -29,19 +28,21 @@ The project combines RTL that I designed, course starter templates that I comple
 
 | Area | Starting Point | My Work |
 | --- | --- | --- |
-| OTTER architecture | Course-provided architecture | Implemented and progressively integrated the architecture in Verilog/SystemVerilog |
-| Program Counter | Architecture/specification | Designed and implemented the PC and next-PC logic |
-| ALU | Architecture/specification | Designed and implemented the 32-bit ALU |
-| Immediate Generator | Architecture/specification | Implemented extraction and extension of RISC-V immediate formats |
-| Branch Address Generator | Architecture/specification | Implemented branch, `jal`, and `jalr` target generation |
-| Branch Condition Generator | Architecture/specification | Implemented equality and signed/unsigned comparison logic for conditional branches |
-| `CU_FSM` / `CU_DCDR` | Course starter templates | Completed and extended control logic for the supported instruction set and interrupt behavior |
+| OTTER architecture | High-level circuit diagram (see figure **INSERT FIGURE NUMBER**) | Implemented and progressively integrated the architecture in Verilog/SystemVerilog |
+| Program Counter | Functional requirements | Designed and implemented the PC and next-PC logic |
+| ALU | Functional requirements | Designed and implemented the 32-bit ALU based on operation descriptions in the assembler manual|
+| Immediate Generator | Functional requirements | Implemented extraction and extension of RISC-V immediate formats based on their descriptions in the assembler manual|
+| Branch Address Generator | Functional requirements | Implemented branch, `jal`, and `jalr` target generation based on relevant descriptions in the assembler manual|
+| Branch Condition Generator | Functional requirements | Implemented equality and signed/unsigned comparison logic for conditional branches |
+| Control Units FSM / Decoder | Barebones course starter templates | Completed and extended control logic for the supported instruction set and interrupt behavior |
 | Register File / Memory | Course-provided modules | Integrated into the processor datapath |
 | CSR Module | Course-provided module | Integrated with the CPU and modified the surrounding datapath/control logic to support interrupts |
-| Timer-Counter | Course-provided peripheral | Integrated with the FPGA system and used as an interrupt source |
-| Basys 3 MMIO Wrapper | Course-provided | Used for firmware interaction with buttons, switches, LEDs, and the seven-segment display |
-| Firmware | Assignment specifications | Wrote assembly test programs and final demonstration firmware |
-| Verification | — | Simulated individual modules and integrated CPU behavior and validated the completed design on the Basys 3 |
+| Timer-Counter | Course-provided peripheral | Integrated with the FPGA system on the wrapper level and used as an interrupt source |
+| Basys 3 MMIO Wrapper | Course starter template | Completed and modified memory mappings to buttons, switches, LEDs, and 7-segment display and implemented connections to the CPU and timer-counter|
+| Firmware | Assignment specifications | Designed and coded assembly test programs and final demonstration firmware |
+| Verification | — | Simulated individual modules and the complete CPU in Vivado and validated the completed design on the Basys 3 (see Figure 1)|
+
+*Figure 2: table detailing my contributions the project as opposed to what was course-provided*
 
 ---
 
@@ -515,3 +516,5 @@ Original authorship and revision headers are preserved in course-provided source
 **[ADD ANY SPECIFIC PROFESSOR/COURSE-STAFF ATTRIBUTION REQUIRED.]**
 
 **[IF YOU REUSE OR ADAPT AN ARCHITECTURE DIAGRAM FROM THE TEXTBOOK, INCLUDE ITS SPECIFIC ATTRIBUTION AND LICENSE INFORMATION HERE OR IN THE FIGURE CAPTION.]**
+
+**LIST REFERENCE MATERIALS (assembler manual, lab manual, textbook)**
