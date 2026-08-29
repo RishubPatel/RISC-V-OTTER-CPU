@@ -12,7 +12,7 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 ## Project Overview
 
-This GitHub repository documents my implementation of thRISC-V OTTER CPU architecture** used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
+This GitHub repository documents my implementation of the RISC-V OTTER CPU architecture** used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
 
 The processor uses a 32-bit multicycle architecture based primarily on the RV32I base integer instruction set, with additional system/CSR instructions used by the OTTER interrupt architecture. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
 
@@ -73,12 +73,7 @@ The processor consists of a datapath controlled by two control units:
 
 The OTTER uses a multicycle execution model.
 
-Most instructions use two primary cycles:
-
-1. **Fetch** — The PC provides the instruction address and the CPU reads the next instruction from memory.
-2. **Execute** — The processor decodes the instruction and performs the required datapath operation.
-
-Most arithmetic, logical, branch, jump, and store instructions complete after execute.
+Most instructions use two primary cycles: **fetch**, where the PC provides the instruction address and the CPU reads the next instruction from memory, and **execute**, where the processor decodes the instruction and performs the required datapath operation. Most arithmetic, logical, branch, jump, and store instructions complete after execute.
 
 Load instructions require a third **writeback** cycle. The execute cycle calculates the memory address and initiates the read; the following cycle writes the returned data into the destination register.
 
@@ -141,13 +136,14 @@ The timer-counter can generate an interrupt connected to the CPU's interrupt inp
 
 ### Program Counter and Control Flow
 
-The program counter stores the address of the instruction currently being executed and loads its next value through a multiplexer.
+The program counter stores the address of the instruction currently being executed and loads its next value through a MUX.
 
-During normal sequential execution: **EXPLAIN WHY IT'S PC + 4**
+During normal sequential execution:
 
 ```text
 PC_next = PC + 4
 ```
+(because the memory is byte-addressable, there are 4 bytes in a word, and each instruction is one word of memory space, so PC + 4 goes to the next instruction).
 
 Control-flow instructions can redirect execution instead.
 
@@ -159,29 +155,18 @@ jal    = PC + J-immediate
 jalr   = rs1 + I-immediate
 ```
 
-The branch-condition logic independently evaluates:
-
-- equality
-- signed less-than
-- unsigned less-than
-
-The control decoder combines these results with the current branch instruction to determine whether the PC should be redirected.
+The branch-condition logic independently evaluates equality, signed less-than, and unsigned less-than comparisons between the source registers `rs1` and `rs2`. The control decoder combines these results with the current branch instruction to determine whether the PC should be redirected.
 
 ### Immediate Generation
 
 RISC-V distributes immediate bits differently across its instruction formats. The immediate generator reconstructs the immediate value required by each instruction and extends it to 32 bits.
 
-The implementation handles the immediate formats required for:
+The implementation handles the immediate formats required for the various instruction types (I, S, B, U, and J), as are detailed figure 5:
 
-- I-type instructions
-- S-type instructions
-- B-type instructions
-- U-type instructions
-- J-type instructions
+![RISC-V Instruction Types and Formats](media/diagrams/RISC-V_Instruction_types_formats.svg)
+*Figure 5: RISC-V Instruction Types and Associated Instruction Formats from James Mealy and Paul Hummel's <ins>The RISC-V MCU Assembly Language Manual, v5.06 </ins>*
 
-> **[OPTIONAL: INSERT A COMPACT IMMEDIATE-FORMAT DIAGRAM HERE]**
-
-These values are used for arithmetic-immediate operations, memory addressing, branches, jumps, and upper-immediate instructions.
+These values are used for immediate arithmetic operations, memory addressing, branches, jumps, and upper-immediate instructions.
 
 ### Arithmetic Logic Unit
 
