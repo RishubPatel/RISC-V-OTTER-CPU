@@ -77,7 +77,7 @@ Most instructions use two primary cycles: **fetch**, where the PC provides the i
 
 Load instructions require a third **writeback** cycle. The execute cycle calculates the memory address and initiates the read; the following cycle writes the returned data into the destination register.
 
-There is also an **interrupt** cycle used to save the current state (to return to after handling the interrupt) and redirect execution to the interrupt service routine.
+There is also an **interrupt** cycle used to save the current state (to return to after handling the interrupt) and redirect execution to the interrupt service routine (ISR).
 
 Additionally, when the reset signal is asserted, the CPU enters an **init** cycle before entering the normal instruction cycle.
 
@@ -91,7 +91,7 @@ Possible sources include:
 - `branch` for conditional branch targets
 - `jal` target for PC-relative jumps
 - `jalr` target for register-based jumps
-- `mtvec` when entering an interrupt service routine
+- `mtvec` when entering an ISR
 - `mepc` when returning from an interrupt
 
 The branch and jump targets are generated from the current PC value, register operands, and immediate fields encoded in the instruction.
@@ -172,7 +172,7 @@ The implementation handles the immediate formats required for the various instru
   <a href="media/diagrams/RISC-V_Instruction_types_formats.svg">
     <img src="media/diagrams/RISC-V_Instruction_types_formats.svg" width="750">
   </a><br>
-  <em>RISC-V Instruction Types and Associated Instruction Formats from James Mealy and Paul Hummel's <ins>The RISC-V MCU Assembly Language Manual, v5.06 </ins></ins></em>
+  <em>Figure 5: RISC-V Instruction Types and Associated Instruction Formats from James Mealy and Paul Hummel's <ins>The RISC-V MCU Assembly Language Manual, v5.06 </ins></em>
 </p>
 
 These values are used for immediate arithmetic operations, memory addressing, branches, jumps, and upper-immediate instructions.
@@ -198,7 +198,7 @@ Two registers can be read as instruction operands (`rs1` and `rs2`), while instr
 
 Depending on the instruction, the register-file writeback path selects data from `PC + 4`, CSR read data, data read from memory, or the ALU result.
 
-Special registers include:
+Notable registers include:
 - `x0` or `zero`, which is architecturally fixed to zero
 - `x1` or `ra`, which conventionally stores return addresses
 - `x2` or `sp`, which conventionally holds the stack pointer
@@ -224,39 +224,71 @@ The same memory-access mechanism also allows software to communicate with memory
 
 ### FSM
 
-> **[INSERT FSM STATE DIAGRAM HERE]**
+<p align="center">
+  <a href="media/diagrams/FSMStateMachine.svg">
+    <img src="media/diagrams/FSMStateMachine.svg" width="750">
+  </a><br>
+  <em>Figure 6: RISC-V OTTER FSM state diagram</em>
+</p>
+
+
+During the Execute state, the FSM asserts different control signals and selects the next state based on the current instruction type. Signals not shown as asserted are `0`.
+
+| Instruction Type | `PC_WE` (PC write enable) | `RF_WE` (RF write enable) | `memWE2` (Data memory write enable) | `memRDEN2` (Data memory read enable) | `csr_WE` (CSR write enable) | `mret_exec` (MCU executing `mret` instruction) | Next State (`intr = 0`) | Next State (`intr = 1`) |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | --- | --- |
+| `LOAD` | 0 | 0 | 0 | 1 | 0 | 0 | `st_WB` | `st_WB` |
+| `STORE` | 1 | 0 | 1 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `BRANCH` | 1 | 0 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `LUI` | 1 | 1 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `AUIPC` | 1 | 1 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `OP_IMM` | 1 | 1 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `OP_RG3` | 1 | 1 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `JAL` | 1 | 1 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `JALR` | 1 | 1 | 0 | 0 | 0 | 0 | `st_FET` | `st_INTR` |
+| `CSRRW` | 1 | 1 | 0 | 0 | 1 | 0 | `st_FET` | `st_INTR` |
+| `CSRRC` | 1 | 1 | 0 | 0 | 1 | 0 | `st_FET` | `st_INTR` |
+| `CSRRS` | 1 | 1 | 0 | 0 | 1 | 0 | `st_FET` | `st_INTR` |
+| `MRET` | 1 | 0 | 0 | 0 | 1 | 1 | `st_FET` | `st_INTR` |
+
+*Figure 7: FSM control signals and next-state behavior during the execute state*
 
 The processor control system consists of `CU_FSM` and `CU_DCDR`. Both began from course-provided starter templates that I completed and later extended.
 
-The interrupt-enabled FSM contains the major states:
-
-- **Initialization**
-- **Fetch**
-- **Execute**
-- **Writeback**
-- **Interrupt**
-
-During **fetch**, instruction-memory access is enabled.
-
-The processor then enters **execute**, where most instructions complete. Arithmetic, logical, store, branch, and jump instructions normally return directly to fetch afterward.
-
-Loads transition to **writeback**, where the value returned from memory can be written into the destination register.
-
-When an enabled interrupt is detected at the appropriate point in execution, the FSM enters the **interrupt** state rather than immediately fetching the next instruction.
+The interrupt-enabled FSM contains the following states, whose asserted signals are detailed in figures 6 and 7:
+- initialization: synchronously resets the program counter and interrupt-related CSRs
+- fetch: reads the instruction at the current PC
+- execute: decodes and carries out the current instruction
+- writeback: writes loaded memory data into the destination register
+- interrupt: saves the return state and redirects execution to the interrupt handler
 
 ### Decoder
 
-`CU_DCDR` interprets the instruction opcode and function fields and generates the selection signals that configure the datapath.
+The control-unit decoder selects datapath operations and data sources based on the current instruction. For branches, the selected next-PC source also depends on the branch-condition results.
 
-Depending on the instruction, it determines:
+| Instruction Type | `ALU_FUN` (ALU function) | `srcA_SEL` (ALU MUX A SEL) | `srcB_SEL` (ALU MUX B SEL) | `RF_SEL` (Register file MUX SEL) | `PC_SEL` (PC MUX SEL) |
+| --- | --- | --- | --- | --- | --- |
+| `LUI` | LUI / pass immediate | U-type immediate | `rs2` | ALU result | `PC + 4` |
+| `AUIPC` | Add | U-type immediate | PC | ALU result | `PC + 4` |
+| `JAL` | Add | `rs1` | `rs2` | `PC + 4` | `jal` target |
+| `JALR` | Add | `rs1` | `rs2` | `PC + 4` | `jalr` target |
+| `BRANCH` | Add | `rs1` | `rs2` | `PC + 4` | Branch target if branch condition is met; otherwise `PC + 4` |
+| `LOAD` | Add | `rs1` | I-type immediate | Memory data | `PC + 4` |
+| `STORE` | Add | `rs1` | S-type immediate | `PC + 4` | `PC + 4` |
+| `OP_IMM` | Determined by `func3` / `func7` | `rs1` | I-type immediate | ALU result | `PC + 4` |
+| `OP_RG3` | Determined by `func3` / `func7` | `rs1` | `rs2` | ALU result | `PC + 4` |
+| `CSRRW` | Pass `rs1` | `rs1` | `rs2` | CSR read data | `PC + 4` |
+| `CSRRC` | AND | `~rs1` | CSR data | CSR read data | `PC + 4` |
+| `CSRRS` | OR | `rs1` | CSR data | CSR read data | `PC + 4` |
+| `MRET` | Add | `rs1` | `rs2` | `PC + 4` | `mepc` |
+| Interrupt taken | Don't care | Don't care | Don't care | Don't care | `mtvec` |
 
-- ALU function
-- ALU source A
-- ALU source B
-- register-file writeback source
-- next-PC source
+*Figure 8: Control-unit decoder outputs for each supported instruction type*
 
-For conditional branches, it also uses the comparison results generated by `BRANCH_COND_GEN`.
+The decoder interprets the instruction opcode and function fields and generates the selection signals that configure the datapath.
+
+Depending on the instruction, it determines the ALU function, ALU source A, ALU source B, register-file writeback source, and next-PC source.
+
+For conditional branches, it also uses the comparison results generated by the branch condition generator.
 
 Adding interrupt support required extending both control units and expanding several datapath-selection paths.
 
@@ -290,32 +322,31 @@ The processor implements the hardware operations required by the OTTER's RV32I-b
 
 `csrrw` · `csrrs` · `csrrc` · `mret`
 
-The assembler also supports pseudoinstructions such as `li`, `la`, `mv`, `j`, `ret`, and `csrw`. These are assembler conveniences that expand into one or more underlying machine instructions rather than requiring separate hardware implementations.
+The assembler also supports pseudoinstructions such as `li`, `la`, `mv`, `j`, `ret`, `call`, and `csrw`. These are assembler conveniences that expand into one or more underlying machine instructions rather than requiring separate hardware implementations.
 
 ---
 
 ## Interrupt Support
 
-The interrupt-enabled OTTER uses a **course-provided CSR module** together with modifications to the processor datapath and control system.
+The OTTER uses a course-provided CSR module together with modifications to the processor datapath and control system.
 
-The primary interrupt-related CSRs are:
+The primary interrupt-related CSRs are the following 32-bit registers:
 
-- **`mstatus`** — stores interrupt enable/state information
-- **`mtvec`** — stores the interrupt service routine address
-- **`mepc`** — stores the PC value used to resume execution after the ISR
+- `mstatus`: stores interrupt enable/state information, particularly in the bits `MIE` and `MPIE`
+    - `MIE` (Machine Interrupt Enable) controls whether interrupts are enabled, while `MPIE` (Machine Previous Interrupt Enable) temporarily stores the previous value of `MIE` during an         interrupt
+- `mtvec`: stores the ISR address
+- `mepc`: stores the PC value used to resume execution after the ISR
 
 The processor supports the CSR/system instructions:
 
-- `csrrw`
-- `csrrs`
-- `csrrc`
-- `mret`
+- `csrrw`: reads a CSR into `rd` (destination register) and writes `rs1` (source register 1) into that CSR
+- `csrrs`: reads a CSR into `rd` and sets the CSR bits that are 1 in `rs1`
+- `csrrc`: reads a CSR into `rd` and clears the CSR bits that are 1 in `rs1`
+- `mret`: returns from an interrupt by restoring execution from `mepc`
 
-Adding interrupts required more than instantiating the CSR module. I extended the FSM and decoder, expanded the PC-selection path to include `mtvec` and `mepc`, expanded the ALU operand-selection paths for CSR operations, and added the required interrupt-control connections.
+To add interrupts, I instantiated the CSR module, extended the FSM and decoder, expanded the PC-selection path to include `mtvec` and `mepc`, added CSR operations to the ALU operand-selection paths, and integrated the required interrupt-control connections.
 
 ### Interrupt Flow
-
-At a high level:
 
 1. Firmware writes the ISR address to `mtvec`.
 2. Firmware enables interrupts through `mstatus`.
@@ -324,8 +355,10 @@ At a high level:
 5. The FSM enters the interrupt state.
 6. The return address is saved in `mepc`.
 7. The PC is redirected to the address stored in `mtvec`.
-8. The interrupt service routine executes.
-9. `mret` returns execution through the address stored in `mepc`.
+8. The current interrupt-enable bit (`MIE`) is copied to `MPIE`, then `MIE` is cleared to prevent nested interrupts while the ISR runs.
+9. The ISR executes.
+10. `mret` restores execution by loading the return address stored in `mepc` into the PC.
+11. `MPIE` is copied back to `MIE`, restoring the previous interrupt-enable state.
 
 ---
 
