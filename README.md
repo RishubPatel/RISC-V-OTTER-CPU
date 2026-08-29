@@ -28,7 +28,7 @@ The project combines RTL that I designed, course starter templates that I comple
 
 | Area | Starting Point | My Work |
 | --- | --- | --- |
-| OTTER architecture | High-level circuit diagram (see figure **INSERT FIGURE NUMBER**) | Implemented and progressively integrated the architecture in Verilog/SystemVerilog |
+| OTTER architecture | High-level circuit diagram (see figure 3) | Implemented and progressively integrated the architecture in Verilog/SystemVerilog |
 | Program Counter | Functional requirements | Designed and implemented the PC and next-PC logic |
 | ALU | Functional requirements | Designed and implemented the 32-bit ALU based on operation descriptions in the assembler manual|
 | Immediate Generator | Functional requirements | Implemented extraction and extension of RISC-V immediate formats based on their descriptions in the assembler manual|
