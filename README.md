@@ -42,7 +42,7 @@ The project combines RTL that I designed, course starter templates that I comple
 | Firmware | Assignment specifications | Designed and coded assembly test programs and final demonstration firmware |
 | Verification | — | Simulated individual modules and the complete CPU in Vivado and validated the completed design on the Basys 3 (see Figure 1)|
 
-*Figure 2: table detailing my contributions the project as opposed to what was course-provided*
+*Figure 2: Table detailing my contributions the project as opposed to what was course-provided*
 
 ---
 
@@ -56,16 +56,16 @@ The project combines RTL that I designed, course starter templates that I comple
 
 The processor consists of a datapath controlled by two control units:
 
-- **PC — Program Counter:** stores the address of the current instruction and selects the next address.
-- **MEMORY:** stores program instructions and data and connects the CPU to memory-mapped I/O.
-- **REG_FILE — Register File:** contains 32 32-bit architectural registers and provides two source operands and one destination write port.
-- **IMMED_GEN — Immediate Generator:** extracts and extends immediate fields from the current instruction.
-- **BRANCH_ADDR_GEN — Branch Address Generator:** calculates branch, `jal`, and `jalr` targets.
-- **BRANCH_COND_GEN — Branch Condition Generator:** compares register operands for conditional branches.
-- **ALU — Arithmetic Logic Unit:** performs arithmetic, logical, shift, comparison, and address calculations.
-- **CU_FSM — Control Unit FSM:** sequences instruction execution across clock cycles and generates state-dependent enable signals.
-- **CU_DCDR — Control Unit Decoder:** decodes the current instruction and selects datapath operations and data sources.
-- **CSR — Control and Status Register module:** stores interrupt-related state including `mstatus`, `mtvec`, and `mepc`.
+- **Program Counter (PC):** stores the address of the current instruction and selects the next address
+- **MEMORY:** stores program instructions and data and connects the CPU to memory-mapped I/O
+- **Register File (REG_FILE):** contains 32 32-bit registers and provides two source operands and one destination write port
+- **Immediate Generator (IMMED_GEN):** extracts and extends immediate fields from the current instruction
+- **Branch Address Generator (BRANCH_ADDR_GEN):** calculates branch, `jal`, and `jalr` targets
+- **Branch Condition Generator (BRANCH_COND_GEN):** compares register operands for conditional branches
+- **Arithmetic Logic Unit (ALU):** performs arithmetic, logical, shift, comparison, and address calculations
+- **Control Unit FSM (CU_FSM):** sequences the CPU through instruction-execution cycles and generates control signals based on both the current state and instruction
+- **Control Unit Decoder (CU_DCDR):** generates control signals based on only the current instruction
+- **Control and Status Register module (CSR):** stores interrupt-related CSRs and updates saved PC and interrupt-enable state during interrupt entry and return
 
 ### Multicycle Execution
 
