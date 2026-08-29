@@ -52,9 +52,9 @@ The project combines RTL that I designed, course starter templates that I comple
 <p align="center">
   <a href="media/diagrams/RISC-V_OTTER_MCU_Architecture_Diagram.svg">
     <img src="media/diagrams/RISC-V_OTTER_MCU_Architecture_Diagram.svg" width="1200">
-  </a>
+  </a><br>
+  <em>Figure 3: Circuit schematic for the RISC-V OTTER CPU from James Mealy's <ins>FreeRange Computer Design: The RISC-V OTTER MCU, v14.02</ins></em>
 </p>
-*Figure 3: Circuit schematic for the RISC-V OTTER CPU from James Mealy's <ins>FreeRange Computer Design: The RISC-V OTTER MCU, v14.02</ins>*
 
 The processor consists of a datapath controlled by two control units:
 
@@ -116,8 +116,12 @@ Because I/O is memory-mapped, software can communicate with peripherals using th
 
 ### FPGA System Integration
 
-![Wrapper-level OTTER CPU integration](media/diagrams/WrapperDiagram.svg)
-*Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1*
+<p align="center">
+  <a href="media/diagrams/media/diagrams/WrapperDiagram.svg">
+    <img src="media/diagrams/WrapperDiagram.svg" width="750">
+  </a><br>
+  <em>Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1</ins></em>
+</p>
 
 The CPU interfaces with the Basys 3 through a course-provided memory-mapped I/O wrapper.
 
@@ -136,7 +140,7 @@ The timer-counter can generate an interrupt connected to the CPU's interrupt inp
 
 ### Program Counter and Control Flow
 
-The program counter stores the address of the instruction currently being executed and loads its next value through a MUX.
+The program counter stores the address of the instruction currently being executed and loads its next value through a multiplexer (MUX).
 
 During normal sequential execution:
 
@@ -163,12 +167,17 @@ RISC-V distributes immediate bits differently across its instruction formats. Th
 
 The implementation handles the immediate formats required for the various instruction types (I, S, B, U, and J), as are detailed figure 5:
 
-![RISC-V Instruction Types and Formats](media/diagrams/RISC-V_Instruction_types_formats.svg)
-*Figure 5: RISC-V Instruction Types and Associated Instruction Formats from James Mealy and Paul Hummel's <ins>The RISC-V MCU Assembly Language Manual, v5.06 </ins>*
+
+<p align="center">
+  <a href="media/diagrams/RISC-V_Instruction_types_formats.svg">
+    <img src="media/diagrams/RISC-V_Instruction_types_formats.svg" width="750">
+  </a><br>
+  <em>RISC-V Instruction Types and Associated Instruction Formats from James Mealy and Paul Hummel's <ins>The RISC-V MCU Assembly Language Manual, v5.06 </ins></ins></em>
+</p>
 
 These values are used for immediate arithmetic operations, memory addressing, branches, jumps, and upper-immediate instructions.
 
-### Arithmetic Logic Unit
+### Arithmetic Logic Unit (ALU)
 
 The 32-bit ALU implements the operations required by the supported instruction set, including:
 
@@ -179,22 +188,21 @@ The 32-bit ALU implements the operations required by the supported instruction s
 - signed comparison
 - unsigned comparison
 
-The ALU inputs are selected by multiplexers controlled by `CU_DCDR`, allowing operations to use different combinations of register values, immediate values, PC-related values, and CSR data.
+The ALU inputs are selected by MUXes controlled by the decoder control unit, allowing operations to use different combinations of register values, immediate values, PC-related values, and CSR data.
 
 ### Register File and Writeback
 
-The course-provided register file contains **32 32-bit architectural registers**.
+The course-provided register file contains 32 32-bit registers.
 
 Two registers can be read as instruction operands (`rs1` and `rs2`), while instruction results can be written into destination register `rd`.
 
-Depending on the instruction, the register-file writeback path can select data from sources including:
+Depending on the instruction, the register-file writeback path selects data from `PC + 4`, CSR read data, data read from memory, or the ALU result.
 
-- ALU result
-- data returned from memory
-- `PC + 4`
-- CSR read data
-
-Register `x0` is architecturally fixed to zero. The remaining registers can also be referenced by standard RISC-V ABI names such as `ra`, `sp`, `t0`, `s0`, and `a0`.
+Special registers include:
+- `x0` or `zero`, which is architecturally fixed to zero
+- `x1` or `ra`, which conventionally stores return addresses
+- `x2` or `sp`, which conventionally holds the stack pointer
+- `x6` or `t1`, a temporary register that may be overwritten by the `call` pseudoinstruction when constructing the jump target
 
 ### Memory Access
 
@@ -206,16 +214,7 @@ Loads and stores calculate their effective address using:
 effective_address = rs1 + sign-extended immediate
 ```
 
-The implementation supports byte, halfword, and word memory operations, including signed and unsigned loads:
-
-- `lb`
-- `lbu`
-- `lh`
-- `lhu`
-- `lw`
-- `sb`
-- `sh`
-- `sw`
+The implementation supports byte, halfword, and word memory operations, including signed and unsigned loads.
 
 The same memory-access mechanism also allows software to communicate with memory-mapped peripherals.
 
