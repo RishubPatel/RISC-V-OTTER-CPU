@@ -333,7 +333,7 @@ The OTTER uses a course-provided CSR module together with modifications to the p
 The primary interrupt-related CSRs are the following 32-bit registers:
 
 - `mstatus`: stores interrupt enable/state information, particularly in the bits `MIE` and `MPIE`
-    - `MIE` (Machine Interrupt Enable) controls whether interrupts are enabled, while `MPIE` (Machine Previous Interrupt Enable) temporarily stores the previous value of `MIE` during an         interrupt
+    - `MIE` (Machine Interrupt Enable) controls whether interrupts are enabled, while `MPIE` (Machine Previous Interrupt Enable) temporarily stores the previous value of `MIE` during an interrupt.
 - `mtvec`: stores the ISR address
 - `mepc`: stores the PC value used to resume execution after the ISR
 
@@ -364,13 +364,13 @@ To add interrupts, I instantiated the CSR module, extended the FSM and decoder, 
 
 ## Timer-Counter Integration
 
-The final system incorporates a **course-provided timer-counter peripheral** as an interrupt source.
+The final system uses a course-provided timer-counter peripheral as an interrupt source.
 
 Firmware accesses the peripheral through the memory-mapped I/O interface and configures its control and count registers.
 
 Once enabled, the timer counts clock events and generates an interrupt when the programmed count is reached.
 
-For the final demonstration, I configured the timer to generate interrupts at approximately **200 Hz** with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of **249,999**.
+For the final demonstration, I configured the timer to generate interrupts at approximately 200 Hz with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of 249,999.
 
 These periodic interrupts drive the seven-segment display multiplexing routine.
 
@@ -382,7 +382,7 @@ These periodic interrupts drive the seven-segment display multiplexing routine.
 
 > **[OPTIONAL: INSERT A CLEAN FLOWCHART OF THE DEMONSTRATION FIRMWARE HERE]**
 
-The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts.
+The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. [See the full assembly code here.](DemonstrationAssemblyProgramSwitchCounter.s)
 
 ### Foreground Behavior
 
