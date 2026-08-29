@@ -118,7 +118,7 @@ Because I/O is memory-mapped, software can communicate with peripherals using th
 
 ### FPGA System Integration
 
-> **[INSERT WRAPPER-LEVEL DIAGRAM SHOWING CPU, TIMER-COUNTER, INTERRUPT CONNECTION, MMIO WRAPPER, BUTTONS/SWITCHES, LEDS, AND SEVEN-SEGMENT DISPLAY]**
+![Wrapper-level OTTER CPU integration](media/diagrams/WrapperDiagram.svg)
 *Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1*
 
 The CPU interfaces with the Basys 3 through a course-provided memory-mapped I/O wrapper.
