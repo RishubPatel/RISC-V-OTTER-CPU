@@ -51,8 +51,7 @@ The project combines RTL that I designed, course starter templates that I comple
 ### CPU Architecture
 
 > **[INSERT THE INTERRUPT-ENABLED OTTER ARCHITECTURE DIAGRAM HERE]**
-
-> **[If using or adapting the textbook diagram, add appropriate attribution to James Mealy, _FreeRange Computer Design: The RISC-V OTTER MCU_, v14.02.]**
+*Figure 3: Circuit schematic for the RISC-V OTTER CPU from James Mealy's <ins>FreeRange Computer Design: The RISC-V OTTER MCU, v14.02</ins>*
 
 The processor consists of a datapath controlled by two control units:
 
@@ -73,14 +72,16 @@ The OTTER uses a multicycle execution model.
 
 Most instructions use two primary cycles:
 
-1. **Fetch** — the PC provides the instruction address and the CPU reads the next instruction from memory.
-2. **Execute** — the processor decodes the instruction and performs the required datapath operation.
+1. **Fetch** — The PC provides the instruction address and the CPU reads the next instruction from memory.
+2. **Execute** — The processor decodes the instruction and performs the required datapath operation.
 
 Most arithmetic, logical, branch, jump, and store instructions complete after execute.
 
 Load instructions require a third **writeback** cycle. The execute cycle calculates the memory address and initiates the read; the following cycle writes the returned data into the destination register.
 
-The interrupt-enabled implementation also contains an **interrupt cycle** used to save the return state and redirect execution to the interrupt service routine.
+There is also an **interrupt** cycle used to save the current state (to return to after handling the interrupt) and redirect execution to the interrupt service routine.
+
+Additionally, when the reset signal is asserted, the CPU enters an **init** cycle before entering the normal instruction cycle.
 
 ### Program Counter Sources
 
@@ -89,47 +90,43 @@ The next value loaded into the PC depends on the current instruction and process
 Possible sources include:
 
 - `PC + 4` for normal sequential execution
-- Conditional branch target
-- `jal` target
-- `jalr` target
+- `branch` for conditional branch targets
+- `jal` target for PC-relative jumps
+- `jalr` target for register-based jumps
 - `mtvec` when entering an interrupt service routine
 - `mepc` when returning from an interrupt
 
-The branch and jump targets are generated from the current PC, register operands, and immediate fields encoded in the instruction.
+The branch and jump targets are generated from the current PC value, register operands, and immediate fields encoded in the instruction.
 
 ### Control
 
 Processor control is divided between `CU_FSM` and `CU_DCDR`.
 
-`CU_FSM` is **state-based**. It sequences the CPU through fetch, execute, writeback, and interrupt behavior and produces signals controlling when stateful components may change, including the PC, register file, memory, and CSR module.
+`CU_FSM` is state-based. It sequences the CPU through init, fetch, execute, writeback, and interrupt behavior and produces signals controlling when stateful components may change (mostly write and read enables as well as other single-cycle signals), including the PC, register file, memory, and CSR module.
 
-`CU_DCDR` is **instruction-based combinational logic**. It decodes the opcode and function fields of the current instruction, along with relevant branch and interrupt conditions, to select:
+`CU_DCDR` is instruction-based combinational logic. It decodes the opcode and function fields of the current instruction, along with relevant branch and interrupt conditions, to select ALU operation, ALU source operands, next-PC source, and register file writeback source.
 
-- ALU operation
-- ALU source operands
-- next-PC source
-- register-file writeback source
-
-Together, the two units determine both **what operation the datapath performs** and **when processor state is updated**.
+Together, the two units determine both the operation that the datapath performs and when the processor state is updated.
 
 ### Memory and I/O Architecture
 
-The OTTER uses a **32-bit unified address space**. Program code, data, stack, and memory-mapped I/O occupy regions of the same address space.
+The OTTER uses a Von Neumann architecture with a 32-bit address space. Program code, data, stack, and memory-mapped I/O occupy regions of the same address space.
 
-The course implementation provides 64 KiB of physical memory for code, data, and stack, while peripheral devices occupy a separate memory-mapped I/O region.
+The course implementation provides 64KiB of physical memory for code, data, and stack, while peripheral devices occupy a separate memory-mapped I/O region; in total, the OTTER can address 4 GiB of data.
 
 Because I/O is memory-mapped, software can communicate with peripherals using the same load and store instructions used for normal memory accesses.
 
 ### FPGA System Integration
 
 > **[INSERT WRAPPER-LEVEL DIAGRAM SHOWING CPU, TIMER-COUNTER, INTERRUPT CONNECTION, MMIO WRAPPER, BUTTONS/SWITCHES, LEDS, AND SEVEN-SEGMENT DISPLAY]**
+*Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1*
 
 The CPU interfaces with the Basys 3 through a course-provided memory-mapped I/O wrapper.
 
-The wrapper exposes:
+The wrapper connects the OTTER CPU to the Basys 3 peripherals and timer-counter through memory-mapped I/O. It exposes:
 
 - switches and buttons as CPU-readable inputs
-- LEDs as processor-controlled outputs
+- LEDs as CPU-controlled outputs
 - seven-segment cathode and anode controls
 - timer-counter configuration and count registers
 
@@ -143,7 +140,7 @@ The timer-counter can generate an interrupt connected to the CPU's interrupt inp
 
 The program counter stores the address of the instruction currently being executed and loads its next value through a multiplexer.
 
-During normal sequential execution:
+During normal sequential execution: **EXPLAIN WHY IT'S PC + 4**
 
 ```text
 PC_next = PC + 4
