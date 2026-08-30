@@ -6,10 +6,11 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 <p align="center">
   <img src="media/ShortenedDemonstrationVideo.gif" width="750"><br>
-  <em>Figure 1: OTTER CPU executing the final demonstration firmware on a Basys 3 FPGA.</em>
+  <em>
+    Figure 1: Final OTTER demonstration running on a Basys 3 FPGA. The firmware reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display. 
+    <a href="media/DemonstrationVideoFullUnedited.mp4">View the full unedited demonstration.</a>
+  </em>
 </p>
-
-*Figure 1: Final OTTER demonstration video: The video shows the completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display. See the full unedited video [here](media/DemonstrationVideoFullUnedited.mp4).*
 
 ---
 
@@ -31,7 +32,7 @@ The project combines RTL that I designed, course starter templates that I comple
 
 | Area | Starting Point | My Work |
 | --- | --- | --- |
-| OTTER architecture | High-level circuit diagram (see figure 3) | Implemented and progressively integrated the architecture in Verilog/SystemVerilog |
+| OTTER architecture | High-level circuit diagram (see Figure 3) | Implemented and progressively integrated the architecture in Verilog/SystemVerilog |
 | Program Counter | Functional requirements | Designed and implemented the PC and next-PC logic |
 | ALU | Functional requirements | Designed and implemented the 32-bit ALU based on operation descriptions in the assembler manual|
 | Immediate Generator | Functional requirements | Implemented extraction and extension of RISC-V immediate formats based on their descriptions in the assembler manual|
@@ -45,7 +46,7 @@ The project combines RTL that I designed, course starter templates that I comple
 | Firmware | Assignment specifications | Designed and coded assembly test programs and final demonstration firmware |
 | Verification | — | Simulated individual modules and the complete CPU in Vivado and validated the completed design on the Basys 3 (see Figure 1)|
 
-*Figure 2: Table detailing my contributions to the project as opposed to what was course-provided*
+*Figure 2: Summary of my contributions and course-provided components*
 
 ---
 
@@ -69,7 +70,7 @@ The processor consists of a datapath controlled by two control units:
 - **Branch Condition Generator (BRANCH_COND_GEN):** compares register operands for conditional branches
 - **Arithmetic Logic Unit (ALU):** performs arithmetic, logical, shift, comparison, and address calculations
 - **Control Unit FSM (CU_FSM):** sequences the CPU through instruction-execution cycles and generates control signals based on both the current state and instruction
-- **Control Unit Decoder (CU_DCDR):** generates control signals based on only the current instruction
+- **Control Unit Decoder (CU_DCDR):** generates control signals based on the current instruction independent of the current state
 - **Control and Status Register module (CSR):** stores interrupt-related CSRs and updates saved PC and interrupt-enable state during interrupt entry and return
 
 ### Multicycle Execution
@@ -113,7 +114,7 @@ Together, the two units determine both the operation that the datapath performs 
 
 The OTTER uses a Von Neumann architecture with a 32-bit address space. Program code, data, stack, and memory-mapped I/O occupy regions of the same address space.
 
-The course implementation provides 64KiB of physical memory for code, data, and stack, while peripheral devices occupy a separate memory-mapped I/O region; in total, the OTTER can address 4 GiB of data.
+The course implementation provides 64KiB of physical memory for code, data, and stack, while peripheral devices occupy a separate memory-mapped I/O region; in total, the 32-bit address space spans 4 GiB.
 
 Because I/O is memory-mapped, software can communicate with peripherals using the same load and store instructions used for normal memory accesses.
 
@@ -123,7 +124,7 @@ Because I/O is memory-mapped, software can communicate with peripherals using th
   <a href="media/WrapperDiagram.svg">
     <img src="media/WrapperDiagram.svg" width="750">
   </a><br>
-  <em>Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1</em>
+  <em>Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, and Basys 3 peripherals as in the demonstration in Figure 1</em>
 </p>
 
 The CPU interfaces with the Basys 3 through a course-provided memory-mapped I/O wrapper.
@@ -166,10 +167,7 @@ The branch-condition logic independently evaluates equality, signed less-than, a
 
 ### Immediate Generation
 
-RISC-V distributes immediate bits differently across its instruction formats. The immediate generator reconstructs the immediate value required by each instruction and extends it to 32 bits.
-
-The implementation handles the immediate formats required for the various instruction types (I, S, B, U, and J), as are detailed figure 5:
-
+RISC-V distributes immediate bits differently across its instruction formats (I, S, B, U, and J), as is detailed in Figure 5 below. The immediate generator reconstructs the immediate value required by each instruction and extends it to 32 bits.
 
 <p align="center">
   <a href="media/RISC-V_Instruction_types_formats.svg">
@@ -257,7 +255,7 @@ During the Execute state, the FSM asserts different control signals and selects 
 
 The processor control system consists of `CU_FSM` and `CU_DCDR`. Both began from course-provided starter templates that I completed and later extended.
 
-The interrupt-enabled FSM contains the following states, whose asserted signals are detailed in figures 6 and 7:
+The interrupt-enabled FSM contains the following states, whose asserted signals are detailed in Figures 6 and 7:
 - initialization: synchronously resets the program counter and interrupt-related CSRs
 - fetch: reads the instruction at the current PC
 - execute: decodes and carries out the current instruction
@@ -266,13 +264,11 @@ The interrupt-enabled FSM contains the following states, whose asserted signals 
 
 ### Decoder
 
-### Decoder
-
 The control-unit decoder selects datapath operations and data sources based on the current instruction. For branches, the selected next-PC source also depends on the branch-condition results.
 
 | Instruction Type | `ALU_FUN` | `srcA_SEL` | `srcB_SEL` | `RF_SEL` | `PC_SEL` |
 | --- | --- | --- | --- | --- | --- |
-| `LUI` | Pass `rs1` / LUI | U-type immediate | irrelevant | ALU result | `PC + 4` |
+| `LUI` | Pass source A / LUI | U-type immediate | irrelevant | ALU result | `PC + 4` |
 | `AUIPC` | Add | U-type immediate | PC | ALU result | `PC + 4` |
 | `JAL` | irrelevant | irrelevant | irrelevant | `PC + 4` | `jal` target |
 | `JALR` | irrelevant | irrelevant | irrelevant | `PC + 4` | `jalr` target |
@@ -365,11 +361,11 @@ To add interrupts, I instantiated the CSR module, extended the FSM and decoder, 
 
 The final system uses a course-provided timer-counter peripheral as an interrupt source.
 
-Firmware accesses the peripheral through the memory-mapped I/O interface and configures its control and count registers.
+Firmware accesses the peripheral through the memory-mapped I/O interface and conFigures its control and count registers.
 
 Once enabled, the timer counts clock events and generates an interrupt when the programmed count is reached.
 
-For the final demonstration, I configured the timer to generate interrupts at approximately 200 Hz with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of 249,999.
+For the final demonstration, I conFigured the timer to generate interrupts at approximately 200 Hz with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of 249,999.
 
 These periodic interrupts drive the 7-segment display multiplexing routine.
 
@@ -377,7 +373,7 @@ These periodic interrupts drive the 7-segment display multiplexing routine.
 
 ## Basys 3 Firmware Demo
 
-To view the demo, see figure 1 or click [here](media/DemonstrationVideoFullUnedited.mp4) for the full, unedited video.
+To view the demo, see Figure 1 or click [here](media/DemonstrationVideoFullUnedited.mp4) for the full, unedited video.
 
 The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. The foreground code handles button polling and debouncing, switch input, count updates, and LED movement, while the ISR handles the 7-segment display multiplexing. See the full assembly code [here](DemonstrationAssemblyProgramSwitchCounter.s).
 
@@ -389,8 +385,8 @@ The main program:
 2. Debounces the button in software
 3. Reads the switch corresponding to the currently illuminated LED
 4. Increments a two-digit count if the switch beneath the LED is on; rolls the count from `99` to `00` as needed
-6. Moves the active LED one position to the right; wraps the active LED back to the leftmost position after the final LED
-8. Waits for and debounces the button release before accepting another press
+5. Moves the active LED one position to the right; wraps the active LED back to the leftmost position after the final LED
+6. Waits for and debounces the button release before accepting another press
 
 The active LED therefore indicates which switch will be evaluated on the next valid button press.
 
@@ -414,7 +410,7 @@ The ISR:
 
 ## Verification
 
-I verified the processor progressively in Vivado, beginning with individual datapath modules and progressing to simulations of the integrated CPU running custom RISC-V assembly programs. Module-level testing verified the PC, ALU, immediate generation, branch/jump address generation, and branch-condition logic, while processor-level simulations verified instruction execution, control flow, CSR operations, and interrupt handling.
+I verified the processor progressively in Vivado, beginning with individual datapath modules and progressing to simulations of the integrated CPU running custom RISC-V assembly programs. Module-level testing verified the PC, ALU, immediate generation, branch/jump address generation, and branch-condition logic, while processor-level simulations verified instruction execution, control flow, CSR operations, interrupt handling, and all supported instructions producing expected results.
 
 ### Interrupt Verification
 
@@ -429,7 +425,7 @@ The waveform below shows a complete interrupt entry and return sequence:
 
 The waveform verifies that `MIE` is copied to `MPIE` and cleared when the interrupt is taken, the return PC is saved in `mepc`, and execution is redirected through `mtvec`. When `mret` executes, the PC returns to `mepc` and the previous interrupt-enable state is restored.
 
-Additional interrupt verification simulations verified processor initialization, repeated interrupts, normal execution without interrupts, all supported instructions producing expected results, and the individual datapath modules.
+Additional interrupt verification simulations verified processor initialization, repeated interrupts, normal execution without interrupts, and the individual datapath modules.
 
 ---
 
