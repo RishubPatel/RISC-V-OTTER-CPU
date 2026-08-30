@@ -12,9 +12,9 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 ## Project Overview
 
-This GitHub repository documents my implementation of the RISC-V OTTER CPU architecture** used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
+This GitHub repository documents my implementation of the RISC-V OTTER CPU architecture used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
 
-The processor uses a 32-bit multicycle architecture based primarily on the RV32I base integer instruction set, with additional system/CSR instructions used by the OTTER interrupt architecture. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
+The processor uses a 32-bit multicycle architecture and implements the RISC-V base integer instruction set, along with CSR/system instructions used for interrupt handling. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
 
 The completed implementation supports arithmetic and logical operations, shifts and comparisons, byte/halfword/word loads and stores, conditional branches, `jal`/`jalr`, upper-immediate operations, CSR access, interrupt entry, and return from an interrupt with `mret`.
 
@@ -42,7 +42,7 @@ The project combines RTL that I designed, course starter templates that I comple
 | Firmware | Assignment specifications | Designed and coded assembly test programs and final demonstration firmware |
 | Verification | — | Simulated individual modules and the complete CPU in Vivado and validated the completed design on the Basys 3 (see Figure 1)|
 
-*Figure 2: Table detailing my contributions the project as opposed to what was course-provided*
+*Figure 2: Table detailing my contributions to the project as opposed to what was course-provided*
 
 ---
 
@@ -50,8 +50,8 @@ The project combines RTL that I designed, course starter templates that I comple
 
 ### CPU Architecture
 <p align="center">
-  <a href="media/diagrams/RISC-V_OTTER_MCU_Architecture_Diagram.svg">
-    <img src="media/diagrams/RISC-V_OTTER_MCU_Architecture_Diagram.svg" width="1200">
+  <a href="media/RISC-V_OTTER_MCU_Architecture_Diagram.svg">
+    <img src="media/RISC-V_OTTER_MCU_Architecture_Diagram.svg" width="1200">
   </a><br>
   <em>Figure 3: Circuit schematic for the RISC-V OTTER CPU from James Mealy's <ins>FreeRange Computer Design: The RISC-V OTTER MCU, v14.02</ins></em>
 </p>
@@ -117,10 +117,10 @@ Because I/O is memory-mapped, software can communicate with peripherals using th
 ### FPGA System Integration
 
 <p align="center">
-  <a href="media/diagrams/media/diagrams/WrapperDiagram.svg">
-    <img src="media/diagrams/WrapperDiagram.svg" width="750">
+  <a href="media/WrapperDiagram.svg">
+    <img src="media/WrapperDiagram.svg" width="750">
   </a><br>
-  <em>Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1</ins></em>
+  <em>Figure 4: Wrapper-level integration of the OTTER CPU, timer-counter interrupt source, memory-mapped I/O, and Basys 3 peripherals as in the demonstration in figure 1</em>
 </p>
 
 The CPU interfaces with the Basys 3 through a course-provided memory-mapped I/O wrapper.
@@ -169,8 +169,8 @@ The implementation handles the immediate formats required for the various instru
 
 
 <p align="center">
-  <a href="media/diagrams/RISC-V_Instruction_types_formats.svg">
-    <img src="media/diagrams/RISC-V_Instruction_types_formats.svg" width="750">
+  <a href="media/RISC-V_Instruction_types_formats.svg">
+    <img src="media/RISC-V_Instruction_types_formats.svg" width="750">
   </a><br>
   <em>Figure 5: RISC-V Instruction Types and Associated Instruction Formats from James Mealy and Paul Hummel's <ins>The RISC-V MCU Assembly Language Manual, v5.06 </ins></em>
 </p>
@@ -225,8 +225,8 @@ The same memory-access mechanism also allows software to communicate with memory
 ### FSM
 
 <p align="center">
-  <a href="media/diagrams/FSMStateMachine.svg">
-    <img src="media/diagrams/FSMStateMachine.svg" width="750">
+  <a href="media/FSMStateMachine.svg">
+    <img src="media/FSMStateMachine.svg" width="750">
   </a><br>
   <em>Figure 6: RISC-V OTTER FSM state diagram</em>
 </p>
@@ -296,7 +296,7 @@ Adding interrupt support required extending both control units and expanding sev
 
 ## Supported Instructions
 
-The processor implements the hardware operations required by the OTTER's RV32I-based instruction set.
+The processor supports the following RISC-V instructions:
 
 ### Arithmetic and Logic
 
@@ -380,7 +380,7 @@ These periodic interrupts drive the 7-segment display multiplexing routine.
 
 > **[INSERT FULL DEMONSTRATION VIDEO OR CLICKABLE VIDEO THUMBNAIL HERE]**
 
-The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. The foreground code handles button polling and debouncing, switch input, count updates, and LED movement, while the background code (ISR) handles the 7-segment display multiplexing. See the full assembly code [here](DemonstrationAssemblyProgramSwitchCounter.s).
+The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. The foreground code handles button polling and debouncing, switch input, count updates, and LED movement, while the ISR handles the 7-segment display multiplexing. See the full assembly code [here](DemonstrationAssemblyProgramSwitchCounter.s).
 
 ### Foreground Behavior
 
@@ -389,11 +389,9 @@ The main program:
 1. Polls the pushbutton until a press is detected
 2. Debounces the button in software
 3. Reads the switch corresponding to the currently illuminated LED
-4. Increments a two-digit count if the switch beneath the LED is on
-4.5. Rolls the count from `99` back to `00` as needed
-5. Moves the active LED one position to the right
-5.5. Wraps the active LED back to the leftmost position after the final LED
-6. Waits for and debounces the button release before accepting another press
+4. Increments a two-digit count if the switch beneath the LED is on; rolls the count from `99` to `00` as needed
+6. Moves the active LED one position to the right; wraps the active LED back to the leftmost position after the final LED
+8. Waits for and debounces the button release before accepting another press
 
 The active LED therefore indicates which switch will be evaluated on the next valid button press.
 
