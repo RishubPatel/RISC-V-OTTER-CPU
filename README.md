@@ -429,7 +429,7 @@ Vivado simulation was used to verify core modules including:
 - branch and jump target generation
 - branch-condition comparisons
 
-> **[INSERT ONE CLEAN MODULE-LEVEL WAVEFORM — PC OR ALU RECOMMENDED]**
+> **[INSERT ONE CLEAN MODULE-LEVEL WAVEFORM — PC OR ALU RECOMMENDED]** lab7 has interrupt testing; 
 
 ***[WRITE A ONE-SENTENCE CAPTION EXPLAINING EXACTLY WHAT THE WAVEFORM VERIFIES.]***
 
