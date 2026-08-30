@@ -35,7 +35,7 @@ module OTTER_Wrapper_TC(
    localparam BUTTONS_PORT_ADDR  = 32'h11008004;  // 0x1100_8004
     
    //- timer-counter input support
-   localparam TMR_CNTR_CNT_OUT  = 32'h11008008;   // 0x1100_8004
+   localparam TMR_CNTR_CNT_OUT  = 32'h11008008;   // 0x1100_8008
                  
    //- OUTPUT PORT IDS --------------------------------------------------------
    localparam LEDS_PORT_ADDR     = 32'h1100C000;  // 0x1100_C000
