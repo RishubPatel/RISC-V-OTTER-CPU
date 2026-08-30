@@ -6,7 +6,7 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 > **[INSERT SHORT VIDEO/GIF OF THE FINAL PROCESSOR RUNNING ON THE BASYS 3]**
 
-*Figure 1: Final OTTER demonstration video: The video shows the completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the seven-segment display.*
+*Figure 1: Final OTTER demonstration video: The video shows the completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display.*
 
 ---
 
@@ -129,7 +129,7 @@ The wrapper connects the OTTER CPU to the Basys 3 peripherals and timer-counter 
 
 - switches and buttons as CPU-readable inputs
 - LEDs as CPU-controlled outputs
-- seven-segment cathode and anode controls
+- 7-segment cathode and anode controls
 - timer-counter configuration and count registers
 
 The timer-counter can generate an interrupt connected to the CPU's interrupt input, allowing firmware to schedule periodic work without continuously polling the timer or using a blocking delay.
@@ -372,7 +372,7 @@ Once enabled, the timer counts clock events and generates an interrupt when the 
 
 For the final demonstration, I configured the timer to generate interrupts at approximately 200 Hz with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of 249,999.
 
-These periodic interrupts drive the seven-segment display multiplexing routine.
+These periodic interrupts drive the 7-segment display multiplexing routine.
 
 ---
 
@@ -380,46 +380,38 @@ These periodic interrupts drive the seven-segment display multiplexing routine.
 
 > **[INSERT FULL DEMONSTRATION VIDEO OR CLICKABLE VIDEO THUMBNAIL HERE]**
 
-> **[OPTIONAL: INSERT A CLEAN FLOWCHART OF THE DEMONSTRATION FIRMWARE HERE]**
-
-The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. [See the full assembly code here.](DemonstrationAssemblyProgramSwitchCounter.s)
+The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. The foreground code handles button polling and debouncing, switch input, count updates, and LED movement, while the background code (ISR) handles the 7-segment display multiplexing. See the full assembly code [here](DemonstrationAssemblyProgramSwitchCounter.s).
 
 ### Foreground Behavior
 
 The main program:
 
-1. Polls the pushbutton until a press is detected.
-2. Debounces the button in software.
-3. Reads the switch corresponding to the currently illuminated LED.
-4. Increments a two-digit count if that switch is on.
-5. Rolls the count from `99` back to `00`.
-6. Moves the active LED one position to the right.
-7. Wraps the active LED back to the leftmost position after the final LED.
-8. Waits for and debounces the button release before accepting another press.
+1. Polls the pushbutton until a press is detected
+2. Debounces the button in software
+3. Reads the switch corresponding to the currently illuminated LED
+4. Increments a two-digit count if the switch beneath the LED is on
+4.5. Rolls the count from `99` back to `00` as needed
+5. Moves the active LED one position to the right
+5.5. Wraps the active LED back to the leftmost position after the final LED
+6. Waits for and debounces the button release before accepting another press
 
 The active LED therefore indicates which switch will be evaluated on the next valid button press.
 
 ### Timer-Driven ISR
 
-The two rightmost seven-segment digits display the current count.
+The two rightmost 7-segment digits display the current count.
 
 Instead of using a blocking delay loop to multiplex the display, the timer-counter periodically interrupts the CPU.
 
 The ISR:
 
-1. Determines which digit should currently be active.
-2. Selects the corresponding decimal value.
-3. Looks up the required seven-segment pattern.
-4. Writes the segment and anode outputs.
-5. Alternates to the other digit for the next interrupt.
-6. Returns to the foreground program using `mret`.
-
-This separates the application into two execution paths:
-
-- **Foreground code:** button polling/debouncing, switch input, count updates, and LED movement
-- **Interrupt service routine:** periodic display multiplexing
-
-> **[OPTIONAL: INSERT A SHORT ASSEMBLY EXCERPT SHOWING TIMER/INTERRUPT INITIALIZATION OR THE ISR]**
+1. Turns off 7-segment anodes (to prevent ghosting when switching digits)
+2. Determines which digit should currently be active
+3. Selects the corresponding decimal value
+4. Looks up the required 7-segment pattern
+5. Writes the segment and anode outputs
+6. Alternates to the other digit for the next interrupt
+7. Returns to the foreground program using `mret`
 
 ---
 
@@ -471,7 +463,7 @@ The physical implementation successfully:
 - executed custom RISC-V assembly firmware
 - read board buttons and switches
 - controlled LEDs
-- drove the seven-segment display
+- drove the 7-segment display
 - generated timer interrupts
 - entered and returned from the timer ISR
 
