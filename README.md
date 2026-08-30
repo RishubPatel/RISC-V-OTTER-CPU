@@ -4,9 +4,12 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 **Technologies:** Verilog/SystemVerilog · RISC-V Assembly · RARS-OTTER · AMD Vivado · Digilent Basys 3 FPGA
 
-> **[INSERT SHORT VIDEO/GIF OF THE FINAL PROCESSOR RUNNING ON THE BASYS 3]**
+<p align="center">
+  <img src="media/ShortenedDemonstrationVideo.gif" width="750"><br>
+  <em>Figure 1: OTTER CPU executing the final demonstration firmware on a Basys 3 FPGA.</em>
+</p>
 
-*Figure 1: Final OTTER demonstration video: The video shows the completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display.*
+*Figure 1: Final OTTER demonstration video: The video shows the completed OTTER CPU executing custom RISC-V assembly firmware on a Basys 3. The program reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display. See the full unedited video [here](media/DemonstrationVideoFullUnedited.mp4).*
 
 ---
 
@@ -374,7 +377,7 @@ These periodic interrupts drive the 7-segment display multiplexing routine.
 
 ## Basys 3 Firmware Demo
 
-> **[INSERT FULL DEMONSTRATION VIDEO OR CLICKABLE VIDEO THUMBNAIL HERE]**
+To view the demo, see figure 1 or click [here](media/DemonstrationVideoFullUnedited.mp4) for the full, unedited video.
 
 The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. The foreground code handles button polling and debouncing, switch input, count updates, and LED movement, while the ISR handles the 7-segment display multiplexing. See the full assembly code [here](DemonstrationAssemblyProgramSwitchCounter.s).
 
@@ -432,21 +435,35 @@ Additional interrupt verification simulations verified processor initialization,
 
 ## Repository Contents
 
-The repository contains the processor RTL, assembly firmware, simulation files, FPGA constraints, and documentation used for the project.
-
 ```text
 .
 ├── README.md
-├── [RTL / SYSTEMVERILOG FILES OR FOLDER]
-├── [ASSEMBLY PROGRAMS OR FOLDER]
-├── [TESTBENCH / SIMULATION FILES OR FOLDER]
-├── [CONSTRAINTS FILE]
+├── DemonstrationAssemblyProgramSwitchCounter.s
+├── RISCV_OTTER_MCU.xpr
+├── constraints_file_Basys3_Master_v1_03.xdc
+├── demonstrationProgram.mem
+├── rtl/
+│   ├── ALU.v
+│   ├── CSR_v1_05.sv
+│   ├── CU_DCDR.sv
+│   ├── CU_FSM.sv
+│   ├── Otter_wrapper_TC_driver_v1_01.sv
+│   ├── RISCV_OTTER_MCU.v
+│   ├── mux_4t1_nb_v1_06.v
+│   ├── mux_8t1_nb_v1_03.v
+│   ├── otter_memory_v1_06.sv
+│   ├── reg_file_v1_02.sv
+│   ├── reg_nb_synch_clr.v
+│   └── timer_counter.sv
 └── media/
-    ├── diagrams/
-    └── waveforms/
+    ├── DemonstrationVideoFullUnedited.mp4
+    ├── FSMStateDiagram.svg
+    ├── InterruptVerificationSimWaveform.svg
+    ├── RISC-V_Instruction_types_formats.svg
+    ├── RISC-V_OTTER_MCU_Architecture_Diagram.svg
+    ├── ShortenedDemonstrationVideo.gif
+    └── WrapperDiagram.svg
 ```
-
-**[UPDATE THIS TREE TO MATCH THE ACTUAL REPOSITORY BEFORE FINALIZING THE README.]**
 
 ---
 
