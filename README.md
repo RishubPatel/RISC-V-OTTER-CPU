@@ -452,7 +452,7 @@ The repository contains the processor RTL, assembly firmware, simulation files, 
 
 ## Acknowledgments and References
 
-This project was completed in **CPE 233: Computer Design and Assembly Language Programming** at **California Polytechnic State University, San Luis Obispo**, taught by Professor James Mealy.
+This project was completed in CPE 233: Computer Design and Assembly Language Programming at California Polytechnic State University, San Luis Obispo, taught by Professor James Mealy.
 
 The overall RISC-V OTTER architecture and several supporting modules or starter templates were provided through the course. These include the register file and memory modules, CSR module, timer-counter peripheral, and starter code for portions of the control logic and FPGA wrapper. Original authorship and revision headers are preserved in course-provided source files.
 
