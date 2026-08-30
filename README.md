@@ -14,21 +14,38 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 ---
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [My Contributions](#my-contributions)
+- [Architecture Overview](#architecture-overview)
+- [Implementation Details](#implementation-details)
+- [Control Logic](#control-logic)
+- [Supported Instructions](#supported-instructions)
+- [Interrupt Support](#interrupt-support)
+- [Timer-Counter Integration](#timer-counter-integration)
+- [Basys 3 Firmware Demo](#basys-3-firmware-demo)
+- [Verification](#verification)
+- [Repository Contents](#repository-contents)
+- [Acknowledgments and References](#acknowledgments-and-references)
+
+---
+
 ## Project Overview
 
 This GitHub repository documents my implementation of the RISC-V OTTER CPU architecture used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
 
 The processor uses a 32-bit multicycle architecture and implements the RISC-V base integer instruction set, along with CSR/system instructions used for interrupt handling. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
 
-The completed implementation supports arithmetic and logical operations, shifts and comparisons, byte/halfword/word loads and stores, conditional branches, `jal`/`jalr`, upper-immediate operations, CSR access, interrupt entry, and return from an interrupt with `mret`.
+The completed implementation supports arithmetic and logical operations, shifts and comparisons, byte/halfword/word loads and stores, conditional branches, `jal`/`jalr`, upper-immediate operations, CSR access, and interrupt entry/return.
 
-I verified the design progressively in Vivado using simulation-generated timing diagram waveforms and by synthesizing and implementing the CPU on a Basys 3 FPGA to execute various assembly programs. RISC-V assembly firmware running on the processor interacts with the board through the course-provided memory-mapped I/O interface.
+I verified the design progressively in Vivado using simulation-generated timing diagram waveforms and by synthesizing and implementing the CPU on a Basys 3 FPGA to execute various assembly programs. RISC-V assembly firmware running on the processor interacts with the board through the memory-mapped I/O interface.
 
 ---
 
 ## My Contributions
 
-The project combines RTL that I designed, course starter templates that I completed or extended, and prebuilt modules supplied as infrastructure.
+The project combines RTL that I designed, course starter templates that I completed and/or extended, and prebuilt modules supplied as infrastructure.
 
 | Area | Starting Point | My Work |
 | --- | --- | --- |
@@ -38,7 +55,7 @@ The project combines RTL that I designed, course starter templates that I comple
 | Immediate Generator | Functional requirements | Implemented extraction and extension of RISC-V immediate formats based on their descriptions in the assembler manual|
 | Branch Address Generator | Functional requirements | Implemented branch, `jal`, and `jalr` target generation based on relevant descriptions in the assembler manual|
 | Branch Condition Generator | Functional requirements | Implemented equality and signed/unsigned comparison logic for conditional branches |
-| Control Units FSM / Decoder | Barebones course starter templates | Completed and extended control logic for the supported instruction set and interrupt behavior |
+| Control Units FSM / Decoder | Course starter templates | Completed and extended control logic for the supported instruction set and interrupt behavior |
 | Register File / Memory | Course-provided modules | Integrated into the processor datapath |
 | CSR Module | Course-provided module | Integrated with the CPU and modified the surrounding datapath/control logic to support interrupts |
 | Timer-Counter | Course-provided peripheral | Integrated with the FPGA system on the wrapper level and used as an interrupt source |
@@ -77,13 +94,13 @@ The processor consists of a datapath controlled by two control units:
 
 The OTTER uses a multicycle execution model.
 
-Most instructions use two primary cycles: **fetch**, where the PC provides the instruction address and the CPU reads the next instruction from memory, and **execute**, where the processor decodes the instruction and performs the required datapath operation. Most arithmetic, logical, branch, jump, and store instructions complete after execute.
+Most instructions use two primary cycles: fetch, where the PC provides the instruction address and the CPU reads the next instruction from memory, and execute, where the processor decodes the instruction and performs the required datapath operation. Most arithmetic, logical, branch, jump, and store instructions complete during the execute cycle.
 
-Load instructions require a third **writeback** cycle. The execute cycle calculates the memory address and initiates the read; the following cycle writes the returned data into the destination register.
+Load instructions require a third writeback cycle. The execute cycle calculates the memory address and initiates the read; the following cycle writes the returned data into the destination register.
 
-There is also an **interrupt** cycle used to save the current state (to return to after handling the interrupt) and redirect execution to the interrupt service routine (ISR).
+There is also an interrupt cycle used to save the current state (to return to after handling the interrupt) and redirect execution to the interrupt service routine (ISR).
 
-Additionally, when the reset signal is asserted, the CPU enters an **init** cycle before entering the normal instruction cycle.
+Additionally, when the reset signal is asserted, the CPU enters an init cycle before entering the normal instruction cycle.
 
 ### Program Counter Sources
 
@@ -253,7 +270,7 @@ During the Execute state, the FSM asserts different control signals and selects 
 
 *Figure 7: FSM control signals and next-state behavior during the execute state*
 
-The processor control system consists of `CU_FSM` and `CU_DCDR`. Both began from course-provided starter templates that I completed and later extended.
+The processor control system consists of `CU_FSM` and `CU_DCDR`. Both began from course-provided starter templates that I completed and extended.
 
 The interrupt-enabled FSM contains the following states, whose asserted signals are detailed in Figures 6 and 7:
 - initialization: synchronously resets the program counter and interrupt-related CSRs
