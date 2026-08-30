@@ -452,24 +452,23 @@ Other portions of the interrupt verification simulation verified processor initi
 .
 ├── README.md
 ├── DemonstrationAssemblyProgramSwitchCounter.s
-├── RISCV_OTTER_MCU.xpr
 ├── VHDL_and_project_code/
+│   ├── rtl/
+│   │   ├── ALU.v
+│   │   ├── CSR_v1_05.sv
+│   │   ├── CU_DCDR.sv
+│   │   ├── CU_FSM.sv
+│   │   ├── Otter_wrapper_TC_driver_v1_01.sv
+│   │   ├── RISCV_OTTER_MCU.v
+│   │   ├── mux_4t1_nb_v1_06.v
+│   │   ├── mux_8t1_nb_v1_03.v
+│   │   ├── otter_memory_v1_06.sv
+│   │   ├── reg_file_v1_02.sv
+│   │   ├── reg_nb_synch_clr.v
+│   │   └── timer_counter.sv
 │   ├── RISCV_OTTER_MCU.xpr
 │   ├── constraints_file_Basys3_Master_v1_03.xdc
-│   ├── demonstrationProgram.mem
-│   └── rtl/
-│   |   ├── ALU.v
-│   |   ├── CSR_v1_05.sv
-│   |   ├── CU_DCDR.sv
-│   |   ├── CU_FSM.sv
-│   |   ├── Otter_wrapper_TC_driver_v1_01.sv
-│   |   ├── RISCV_OTTER_MCU.v
-│   |   ├── mux_4t1_nb_v1_06.v
-│   |   ├── mux_8t1_nb_v1_03.v
-│   |   ├── otter_memory_v1_06.sv
-│   |   ├── reg_file_v1_02.sv
-│   |   ├── reg_nb_synch_clr.v
-│   |   └── timer_counter.sv
+│   └── demonstrationProgram.mem
 └── media/
     ├── DemonstrationVideoFullUnedited.mp4
     ├── FSMStateDiagram.svg
