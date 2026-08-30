@@ -273,7 +273,7 @@ During the Execute state, the FSM asserts different control signals and selects 
 The processor control system consists of `CU_FSM` and `CU_DCDR`. Both began from course-provided starter templates that I completed and extended.
 
 The interrupt-enabled FSM contains the following states, whose asserted signals are detailed in Figures 6 and 7:
-- initialization: synchronously resets the program counter and interrupt-related CSRs
+- initialization: synchronously resets the program counter
 - fetch: reads the instruction at the current PC
 - execute: decodes and carries out the current instruction
 - writeback: writes loaded memory data into the destination register
@@ -453,21 +453,23 @@ Other portions of the interrupt verification simulation verified processor initi
 ├── README.md
 ├── DemonstrationAssemblyProgramSwitchCounter.s
 ├── RISCV_OTTER_MCU.xpr
-├── constraints_file_Basys3_Master_v1_03.xdc
-├── demonstrationProgram.mem
-├── rtl/
-│   ├── ALU.v
-│   ├── CSR_v1_05.sv
-│   ├── CU_DCDR.sv
-│   ├── CU_FSM.sv
-│   ├── Otter_wrapper_TC_driver_v1_01.sv
-│   ├── RISCV_OTTER_MCU.v
-│   ├── mux_4t1_nb_v1_06.v
-│   ├── mux_8t1_nb_v1_03.v
-│   ├── otter_memory_v1_06.sv
-│   ├── reg_file_v1_02.sv
-│   ├── reg_nb_synch_clr.v
-│   └── timer_counter.sv
+├── VHDL_and_project_code/
+│   ├── RISCV_OTTER_MCU.xpr
+│   ├── constraints_file_Basys3_Master_v1_03.xdc
+│   ├── demonstrationProgram.mem
+│   └── rtl/
+│   |   ├── ALU.v
+│   |   ├── CSR_v1_05.sv
+│   |   ├── CU_DCDR.sv
+│   |   ├── CU_FSM.sv
+│   |   ├── Otter_wrapper_TC_driver_v1_01.sv
+│   |   ├── RISCV_OTTER_MCU.v
+│   |   ├── mux_4t1_nb_v1_06.v
+│   |   ├── mux_8t1_nb_v1_03.v
+│   |   ├── otter_memory_v1_06.sv
+│   |   ├── reg_file_v1_02.sv
+│   |   ├── reg_nb_synch_clr.v
+│   |   └── timer_counter.sv
 └── media/
     ├── DemonstrationVideoFullUnedited.mp4
     ├── FSMStateDiagram.svg
