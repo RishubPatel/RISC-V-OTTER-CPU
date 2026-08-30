@@ -52,7 +52,7 @@ dBounce:   lhu   t4, 0(s0)        #load buttons data
            addi  t3, t3, -1       #decrement debounce delay counter
            bnez  t3, dBounce      #keep debouncing if not done        
 
-	   lhu  a3, -4(s0)        #load switch data
+	       lhu  a3, -4(s0)        #load switch data
            and  a3, a3, a2        #mask current switch value
            
 incr_cnt:  beqz a3, done          #if current switch value is 0, don't increment
@@ -99,8 +99,8 @@ ones:      mv   a7, a0            #load ones digit into a7
            j    display
 
 tens:      beqz a1, done2         #if tens digit is 0, keep displaying ones digit
-	   mv   a7, a1            #load tens digit into a7
-	   mv   t0, s4            #load t0 with value to turn second rightmost digit on (anode)
+	   	   mv   a7, a1            #load tens digit into a7
+	       mv   t0, s4            #load t0 with value to turn second rightmost digit on (anode)
 
 display:   add  t5, s5, a7        #get segs value address
            lb   t6, 0(t5)         #load segs value
