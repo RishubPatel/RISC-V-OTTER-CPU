@@ -7,8 +7,8 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 <p align="center">
   <img src="media/ShortenedDemonstrationVideo.gif" width="750"><br>
   <em>
-    Figure 1: Final OTTER demonstration running on a Basys 3 FPGA. The firmware reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display. 
-    <a href="media/DemonstrationVideoFullUnedited.mp4">View the full unedited demonstration.</a>
+    Figure 1: Final OTTER demonstration running on a Basys 3 FPGA. The firmware reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display. View the full unedited demonstration
+    <a href="media/DemonstrationVideoFullUnedited.mp4">here</a>.
   </em>
 </p>
 
