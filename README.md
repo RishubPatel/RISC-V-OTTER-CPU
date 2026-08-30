@@ -69,8 +69,8 @@ The processor consists of a datapath controlled by two control units:
 - **Branch Address Generator (BRANCH_ADDR_GEN):** calculates branch, `jal`, and `jalr` targets
 - **Branch Condition Generator (BRANCH_COND_GEN):** compares register operands for conditional branches
 - **Arithmetic Logic Unit (ALU):** performs arithmetic, logical, shift, comparison, and address calculations
-- **Control Unit FSM (CU_FSM):** sequences the CPU through instruction-execution cycles and generates control signals based on both the current state and instruction
-- **Control Unit Decoder (CU_DCDR):** generates control signals based on the current instruction independent of the current state
+- **Control Unit FSM (CU_FSM):** sequences the CPU through instruction-execution cycles and generates control signals primarily based on both the current state and instruction
+- **Control Unit Decoder (CU_DCDR):** generates control signals primarily based on the current instruction independent of the current state
 - **Control and Status Register module (CSR):** stores interrupt-related CSRs and updates saved PC and interrupt-enable state during interrupt entry and return
 
 ### Multicycle Execution
@@ -361,11 +361,11 @@ To add interrupts, I instantiated the CSR module, extended the FSM and decoder, 
 
 The final system uses a course-provided timer-counter peripheral as an interrupt source.
 
-Firmware accesses the peripheral through the memory-mapped I/O interface and conFigures its control and count registers.
+Firmware accesses the peripheral through the memory-mapped I/O interface and configures its control and count registers.
 
 Once enabled, the timer counts clock events and generates an interrupt when the programmed count is reached.
 
-For the final demonstration, I conFigured the timer to generate interrupts at approximately 200 Hz with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of 249,999.
+For the final demonstration, I configured the timer to generate interrupts at approximately 200 Hz with no additional prescaling. With the clock configuration used in the project, this corresponded to a timer count of 249,999.
 
 These periodic interrupts drive the 7-segment display multiplexing routine.
 
@@ -425,7 +425,7 @@ The waveform below shows a complete interrupt entry and return sequence:
 
 The waveform verifies that `MIE` is copied to `MPIE` and cleared when the interrupt is taken, the return PC is saved in `mepc`, and execution is redirected through `mtvec`. When `mret` executes, the PC returns to `mepc` and the previous interrupt-enable state is restored.
 
-Additional interrupt verification simulations verified processor initialization, repeated interrupts, normal execution without interrupts, and the individual datapath modules.
+Other portions of the interrupt verification simulation verified processor initialization, repeated interrupts, normal execution without interrupts, and the individual datapath modules.
 
 ---
 
