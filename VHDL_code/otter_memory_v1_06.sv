@@ -69,7 +69,7 @@
     (* ram_decomp = "power" *) logic [31:0] memory [0:16383];
     
     initial begin
-        $readmemh("MatrixMultiplication3x3_5x5_50x50.mem", memory, 0, 16383);
+		$readmemh("lab9.mem", memory, 0, 16383);
     end
     
     assign wordAddr2 = MEM_ADDR2[15:2];
