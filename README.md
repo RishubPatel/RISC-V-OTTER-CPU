@@ -415,19 +415,18 @@ I verified the processor progressively in Vivado, beginning with individual data
 
 ### Interrupt Verification
 
-**THIS IS NOT CORRECT**
-The waveform below shows a complete interrupt entry and return sequence. After the current instruction completes, the processor saves the return address in `mepc`, redirects the PC to the ISR address stored in `mtvec`, disables further interrupts while the ISR executes, and returns to the interrupted program using `mret`.
+The waveform below shows a complete interrupt entry and return sequence:
 
 <p align="center">
-  <a href="media/waveforms/InterruptSim.svg">
-    <img src="media/waveforms/InterruptSim.svg" width="1000">
+  <a href="media/InterruptVerificationSimWaveform.svg">
+    <img src="media/InterruptVerificationSimWaveform.svg" width="1000">
   </a><br>
-  <em>Figure 9: Vivado simulation of interrupt entry and return</em>
+  <em>Figure 9: Annotated Vivado simulation of interrupt entry and return</em>
 </p>
 
 The waveform verifies that `MIE` is copied to `MPIE` and cleared when the interrupt is taken, the return PC is saved in `mepc`, and execution is redirected through `mtvec`. When `mret` executes, the PC returns to `mepc` and the previous interrupt-enable state is restored.
 
-Additional simulations verified processor initialization, repeated interrupts, normal execution without interrupts, and the individual datapath modules.
+Additional interrupt verification simulations verified processor initialization, repeated interrupts, normal execution without interrupts, all supported instructions producing expected results, and the individual datapath modules.
 
 ---
 
