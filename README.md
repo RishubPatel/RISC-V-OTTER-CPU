@@ -24,7 +24,7 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 - [Supported Instructions](#supported-instructions)
 - [Interrupt Support](#interrupt-support)
 - [Timer-Counter Integration](#timer-counter-integration)
-- [Basys 3 Firmware Demo](#basys-3-firmware-demo)
+- [Basys 3 Firmware Demonstration](#basys-3-firmware-demonstration)
 - [Verification](#verification)
 - [Repository Contents](#repository-contents)
 - [Acknowledgments and References](#acknowledgments-and-references)
@@ -388,7 +388,7 @@ These periodic interrupts drive the 7-segment display multiplexing routine.
 
 ---
 
-## Basys 3 Firmware Demo
+## Basys 3 Firmware Demonstration
 
 To view the demo, see Figure 1 or click [here](media/DemonstrationVideoFullUnedited.mp4) for the full, unedited video.
 
