@@ -35,7 +35,7 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
 
 This GitHub repository documents my implementation of the RISC-V OTTER CPU architecture used in Cal Poly's CPE 233: Computer Design and Assembly Language Programming from Winter 2026 as taught by Professor James Mealy. The overall processor architecture was provided by the course. Across a sequence of projects, I implemented and tested major datapath components, completed and extended the processor's control logic from starter templates, integrated the complete multicycle CPU, and later added the required hardware support for interrupts and a timer-counter peripheral.
 
-The processor uses a 32-bit multicycle architecture and implements the RISC-V base integer instruction set, along with CSR/system instructions used for interrupt handling. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
+The processor uses a 32-bit multicycle architecture and supports the RISC-V integer instructions listed in the "[supported instructions](#supported-instructions)" section of this README. Most instructions execute using a fetch cycle followed by an execute cycle, while load instructions require an additional writeback cycle.
 
 The completed implementation supports arithmetic and logical operations, shifts and comparisons, byte/halfword/word loads and stores, conditional branches, `jal`/`jalr`, upper-immediate operations, CSR access, and interrupt entry/return.
 
@@ -98,7 +98,7 @@ Most instructions use two primary cycles: fetch, where the PC provides the instr
 
 Load instructions require a third writeback cycle. The execute cycle calculates the memory address and initiates the read; the following cycle writes the returned data into the destination register.
 
-There is also an interrupt cycle used to save the current state (to return to after handling the interrupt) and redirect execution to the interrupt service routine (ISR).
+There is also an interrupt cycle used to save the return PC value and interrupt-enable state and redirect execution to the interrupt service routine (ISR).
 
 Additionally, when the reset signal is asserted, the CPU enters an init cycle before entering the normal instruction cycle.
 
