@@ -12,8 +12,6 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
     <a href="https://youtu.be/22yCuAyB4xg">YouTube</a>.
   </em>
 
-**NOTE:** When viewing this repository through GitShare, some internal README links may not function, and embedded diagrams may appear with very small text. Referenced project files can still be browsed in the repository (as listed in the Repository Contents section of this README), and the complete repository can be downloaded as a ZIP archive. The diagrams are SVG files, so they can be zoomed in without losing clarity.
-
 ---
 
 ## Table of Contents
@@ -496,3 +494,4 @@ The overall RISC-V OTTER architecture and several supporting modules or starter 
 - James Mealy and Paul Hummel, *The RISC-V MCU Assembly Language Manual*, v5.06
 
 Figures reproduced or adapted from course materials are attributed individually in their captions.
+This repository is published publicly with [permission from the course instructor and the university's office of student rights and responsibilities](permission_to_publish/).
