@@ -12,6 +12,8 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
   </em>
 </p>
 
+**Note:** When viewing this repository through a third-party sharing service, some internal README links may not function. All referenced project files can also be accessed directly through the repository directory in the [Repository Contents](#repository-contents) section of this README.
+
 ---
 
 ## Table of Contents
