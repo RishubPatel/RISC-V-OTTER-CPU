@@ -8,9 +8,10 @@ This is a 32-bit multicycle RISC-V OTTER CPU implemented in Verilog/SystemVerilo
   <img src="media/ShortenedDemonstrationVideo.gif" width="750"><br>
   <em>
     Figure 1: Final OTTER demonstration running on a Basys 3 FPGA. The firmware reads buttons and switches, controls LEDs, maintains a two-digit count, and uses timer-generated interrupts to multiplex the 7-segment display. View the full unedited demonstration
-    <a href="media/DemonstrationVideoFullUnedited.mp4">here</a>.
+    <a href="media/DemonstrationVideoFullUnedited.mp4">here</a> or on
+    <a href="https://youtu.be/22yCuAyB4xg">YouTube</a>.
   </em>
-</p>
+</p>To view the full unedited demonstration, click [here](media/DemonstrationVideoFullUnedited.mp4) or watch it on [YouTube](https://youtu.be/22yCuAyB4xg).
 
 **NOTE:** When viewing this repository through GitShare, some internal README links may not function, and embedded diagrams may appear with very small text. Referenced project files can still be browsed in the repository (as listed in the Repository Contents section of this README), and the complete repository can be downloaded as a ZIP archive. The diagrams are SVG files, so they can be zoomed in without losing clarity.
 
@@ -392,7 +393,7 @@ These periodic interrupts drive the 7-segment display multiplexing routine.
 
 ## Basys 3 Firmware Demonstration
 
-To view the demo, see Figure 1 or click [here](media/DemonstrationVideoFullUnedited.mp4) for the full, unedited video.
+To view the demo, see Figure 1. For the full, unedited video, click [here](media/DemonstrationVideoFullUnedited.mp4) or watch it on [YouTube](https://youtu.be/22yCuAyB4xg).
 
 The final demonstration program combines foreground polling, memory-mapped I/O, software debouncing, and timer-generated interrupts. The foreground code handles button polling and debouncing, switch input, count updates, and LED movement, while the ISR handles the 7-segment display multiplexing. See the full assembly code [here](DemonstrationAssemblyProgramSwitchCounter.s).
 
